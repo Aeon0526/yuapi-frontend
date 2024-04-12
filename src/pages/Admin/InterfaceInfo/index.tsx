@@ -21,11 +21,11 @@ import React, { useRef, useState } from 'react';
 
 const TableList: React.FC = () => {
   /**
-   * @zh-CN 新建窗口的弹窗
+   * 新建窗口的弹窗
    *  */
   const [createModalOpen, handleModalOpen] = useState<boolean>(false);
   /**
-   * @zh-CN 分布更新窗口的弹窗
+   * 分布更新窗口的弹窗
    * */
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
@@ -34,7 +34,7 @@ const TableList: React.FC = () => {
   const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
 
   /**
-   * @zh-CN 添加节点
+   * 添加节点
    * @param fields
    */
   const handleAdd = async (fields: API.InterfaceInfo) => {
@@ -56,7 +56,7 @@ const TableList: React.FC = () => {
   };
 
   /**
-   * @zh-CN 更新节点
+   * 更新节点
    *
    * @param fields
    */
@@ -125,7 +125,7 @@ const TableList: React.FC = () => {
 
   /**
    *  Delete node
-   * @zh-CN 删除节点
+   * 删除节点
    *
    * @param record
    */
@@ -148,7 +148,7 @@ const TableList: React.FC = () => {
   };
 
   /**
-   * @zh-CN 国际化配置
+   * 国际化配置
    * */
 
   const columns: ProColumns<API.InterfaceInfo>[] = [
