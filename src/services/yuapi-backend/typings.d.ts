@@ -89,17 +89,6 @@ declare namespace API {
     message?: string;
   };
 
-  type checkUsingGETParams = {
-    /** echostr */
-    echostr?: string;
-    /** nonce */
-    nonce?: string;
-    /** signature */
-    signature?: string;
-    /** timestamp */
-    timestamp?: string;
-  };
-
   type DeleteRequest = {
     id?: number;
   };
@@ -121,6 +110,10 @@ declare namespace API {
 
   type getUserVOByIdUsingGETParams = {
     /** id */
+    id?: number;
+  };
+
+  type IdRequest = {
     id?: number;
   };
 
@@ -360,14 +353,11 @@ declare namespace API {
     createTime?: string;
     id?: number;
     isDelete?: number;
-    mpOpenId?: string;
-    unionId?: string;
     updateTime?: string;
     userAccount?: string;
     userAvatar?: string;
     userName?: string;
     userPassword?: string;
-    userProfile?: string;
     userRole?: string;
   };
 
@@ -376,11 +366,6 @@ declare namespace API {
     userAvatar?: string;
     userName?: string;
     userRole?: string;
-  };
-
-  type userLoginByWxOpenUsingGETParams = {
-    /** code */
-    code: string;
   };
 
   type UserLoginRequest = {
