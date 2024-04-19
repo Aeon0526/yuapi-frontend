@@ -3,7 +3,9 @@ import UpdateModal from '@/pages/Admin/InterfaceInfo/components/UpdateModal';
 import {
   addInterfaceInfoUsingPost,
   deleteInterfaceInfoUsingPost,
-  listInterfaceInfoByPageUsingGet, offlineInterfaceInfoUsingPost, onlineInterfaceInfoUsingPost,
+  listInterfaceInfoByPageUsingGet,
+  offlineInterfaceInfoUsingPost,
+  onlineInterfaceInfoUsingPost,
   updateInterfaceInfoUsingPost,
 } from '@/services/yuapi-backend/interfaceInfoController';
 import { PlusOutlined } from '@ant-design/icons';
@@ -21,20 +23,23 @@ import React, { useRef, useState } from 'react';
 
 const TableList: React.FC = () => {
   /**
-   * 新建窗口的弹窗
+   * @en-US Pop-up window of new window
+   * @zh-CN 新建窗口的弹窗
    *  */
-  const [createModalOpen, handleModalOpen] = useState<boolean>(false);
+  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   /**
-   * 分布更新窗口的弹窗
+   * @en-US The pop-up window of the distribution update window
+   * @zh-CN 分布更新窗口的弹窗
    * */
-  const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
+  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.InterfaceInfo>();
+  const [selectedRowsState, setSelectedRows] = useState<API.InterfaceInfo[]>([]);
 
   /**
-   * 添加节点
+   * @en-US Add node
+   * @zh-CN 添加节点
    * @param fields
    */
   const handleAdd = async (fields: API.InterfaceInfo) => {
@@ -45,34 +50,37 @@ const TableList: React.FC = () => {
       });
       hide();
       message.success('创建成功');
-      actionRef.current?.reloadAndRest?.();
-      handleModalOpen(false);
+      handleModalVisible(false);
       return true;
     } catch (error: any) {
       hide();
-      message.error('创建失败.' + error.message);
+      message.error('创建失败，' + error.message);
       return false;
     }
   };
 
   /**
-   * 更新节点
+   * @en-US Update node
+   * @zh-CN 更新节点
    *
    * @param fields
    */
   const handleUpdate = async (fields: API.InterfaceInfo) => {
+    if (!currentRow) {
+      return;
+    }
     const hide = message.loading('修改中');
     try {
       await updateInterfaceInfoUsingPost({
+        id: currentRow.id,
         ...fields,
       });
       hide();
-      message.success('修改成功');
-      actionRef.current?.reloadAndRest?.();
+      message.success('操作成功');
       return true;
     } catch (error: any) {
       hide();
-      message.error('操作失败.' + error.message);
+      message.error('操作失败，' + error.message);
       return false;
     }
   };
@@ -91,11 +99,11 @@ const TableList: React.FC = () => {
       });
       hide();
       message.success('操作成功');
-      actionRef.current?.reloadAndRest?.();
+      actionRef.current?.reload();
       return true;
     } catch (error: any) {
       hide();
-      message.error('操作失败.' + error.message);
+      message.error('操作失败，' + error.message);
       return false;
     }
   };
@@ -114,18 +122,18 @@ const TableList: React.FC = () => {
       });
       hide();
       message.success('操作成功');
-      actionRef.current?.reloadAndRest?.();
+      actionRef.current?.reload();
       return true;
     } catch (error: any) {
       hide();
-      message.error('操作失败.' + error.message);
+      message.error('操作失败，' + error.message);
       return false;
     }
   };
 
   /**
    *  Delete node
-   * 删除节点
+   * @zh-CN 删除节点
    *
    * @param record
    */
@@ -138,17 +146,18 @@ const TableList: React.FC = () => {
       });
       hide();
       message.success('删除成功');
-      actionRef.current?.reloadAndRest?.();
+      actionRef.current?.reload();
       return true;
     } catch (error: any) {
       hide();
-      message.error('删除失败.' + error.message);
+      message.error('删除失败，' + error.message);
       return false;
     }
   };
 
   /**
-   * 国际化配置
+   * @en-US International configuration
+   * @zh-CN 国际化配置
    * */
 
   const columns: ProColumns<API.InterfaceInfo>[] = [
@@ -165,7 +174,6 @@ const TableList: React.FC = () => {
         rules: [
           {
             required: true,
-            message: '请输入接口名称',
           },
         ],
       },
@@ -181,19 +189,24 @@ const TableList: React.FC = () => {
       valueType: 'text',
     },
     {
-      title: '接口地址',
+      title: 'url',
       dataIndex: 'url',
       valueType: 'text',
     },
     {
+      title: '请求参数',
+      dataIndex: 'requestParams',
+      valueType: 'jsonCode',
+    },
+    {
       title: '请求头',
       dataIndex: 'requestHeader',
-      valueType: 'text',
+      valueType: 'jsonCode',
     },
     {
       title: '响应头',
       dataIndex: 'responseHeader',
-      valueType: 'text',
+      valueType: 'jsonCode',
     },
     {
       title: '状态',
@@ -230,7 +243,7 @@ const TableList: React.FC = () => {
         <a
           key="config"
           onClick={() => {
-            handleUpdateModalOpen(true);
+            handleUpdateModalVisible(true);
             setCurrentRow(record);
           }}
         >
@@ -249,8 +262,8 @@ const TableList: React.FC = () => {
         record.status === 1 ? (
           <Button
             type="text"
-            danger
             key="config"
+            danger
             onClick={() => {
               handleOffline(record);
             }}
@@ -260,8 +273,8 @@ const TableList: React.FC = () => {
         ) : null,
         <Button
           type="text"
-          danger
           key="config"
+          danger
           onClick={() => {
             handleRemove(record);
           }}
@@ -271,6 +284,7 @@ const TableList: React.FC = () => {
       ],
     },
   ];
+
   return (
     <PageContainer>
       <ProTable<API.RuleListItem, API.PageParams>
@@ -285,13 +299,12 @@ const TableList: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              handleModalOpen(true);
+              handleModalVisible(true);
             }}
           >
             <PlusOutlined /> 新建
           </Button>,
         ]}
-        // tsx 格式报错
         request={async (
           params,
           sort: Record<string, SortOrder>,
@@ -335,7 +348,7 @@ const TableList: React.FC = () => {
               </a>{' '}
               项 &nbsp;&nbsp;
               <span>
-                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)} 万
+                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.id!, 0)} 万
               </span>
             </div>
           }
@@ -352,13 +365,12 @@ const TableList: React.FC = () => {
           <Button type="primary">批量审批</Button>
         </FooterToolbar>
       )}
-
       <UpdateModal
         columns={columns}
         onSubmit={async (value) => {
           const success = await handleUpdate(value);
           if (success) {
-            handleUpdateModalOpen(false);
+            handleUpdateModalVisible(false);
             setCurrentRow(undefined);
             if (actionRef.current) {
               actionRef.current.reload();
@@ -366,18 +378,18 @@ const TableList: React.FC = () => {
           }
         }}
         onCancel={() => {
-          handleUpdateModalOpen(false);
+          handleUpdateModalVisible(false);
           if (!showDetail) {
             setCurrentRow(undefined);
           }
         }}
-        visible={updateModalOpen}
+        visible={updateModalVisible}
         values={currentRow || {}}
       />
 
       <Drawer
         width={600}
-        open={showDetail}
+        visible={showDetail}
         onClose={() => {
           setCurrentRow(undefined);
           setShowDetail(false);
@@ -401,12 +413,12 @@ const TableList: React.FC = () => {
       <CreateModal
         columns={columns}
         onCancel={() => {
-          handleModalOpen(false);
+          handleModalVisible(false);
         }}
         onSubmit={(values) => {
           handleAdd(values);
         }}
-        visible={createModalOpen}
+        visible={createModalVisible}
       />
     </PageContainer>
   );
